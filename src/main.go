@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -24,9 +23,6 @@ func main() {
 			if update.Message.Text == "/start" {
 				for {
 					a.FetchNews(update)
-					msg := tgbotapi.NewMessage(update.Message.Chat.ID, "end")
-					bot.Send(msg)
-					fmt.Println("I sleep")
 					time.Sleep(time.Hour)
 				}
 			}
