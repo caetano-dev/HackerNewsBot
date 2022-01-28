@@ -6,7 +6,7 @@ A Telegram bot that serves you with personalized HackerNews articles. You can se
 
 In order to run the bot you will need a [Telegram](https://core.telegram.org/api) API key.
 
-Rename `example.news.json` to `news.json`, `example.env` to `.env` and put the key in the file.
+Rename `example.env` to `.env` and put the key in the file.
 ```env
 TOKEN=<TOKEN>
 ```
