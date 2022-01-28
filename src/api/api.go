@@ -54,6 +54,7 @@ func FetchNews(update tgbotapi.Update) {
 	for _, id := range response {
 		resp, err := http.Get(fmt.Sprintf(newsInfos, id))
 		u.HandleError(err)
+
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
@@ -61,24 +62,23 @@ func FetchNews(update tgbotapi.Update) {
 		}
 		err = json.NewDecoder(resp.Body).Decode(&news)
 		u.HandleError(err)
+
 		for _, topic := range relevantTopics {
-			if news.Title != "" && news.URL != "" {
-				if strings.Contains(strings.ToLower(news.Title), topic) {
-					if checkIfNewsIsInJSON(news) == false {
-						addNewsToJSON(news)
-						cleanJSONFile(news)
-						msg := tgbotapi.NewMessage(update.Message.Chat.ID, news.Title+"\n"+news.URL)
-						bot.Send(msg)
-					}
-				}
+			if news.Title != "" && news.URL != "" && strings.Contains(strings.ToLower(news.Title), topic) && !checkIfNewsIsInJSON(news) {
+				addNewsToJSON(news)
+				cleanJSONFile(news)
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, news.Title+"\n"+news.URL)
+				bot.Send(msg)
 			}
 		}
 	}
 }
 
 func checkIfNewsIsInJSON(news News) bool {
+	createFileIfNotExists()
 	file, err := os.Open("news.json")
 	u.HandleError(err)
+
 	defer file.Close()
 
 	var newsList []News
@@ -94,25 +94,42 @@ func checkIfNewsIsInJSON(news News) bool {
 	return false
 }
 
+func createFileIfNotExists() {
+	_, err := os.Stat("news.json")
+	if os.IsNotExist(err) {
+		file, err := os.Create("news.json")
+		u.HandleError(err)
+		defer file.Close()
+		encoder := json.NewEncoder(file)
+		err = encoder.Encode([]News{})
+		u.HandleError(err)
+	}
+
+}
 func addNewsToJSON(news News) {
 	file, err := os.Open("news.json")
 	u.HandleError(err)
+
 	decoder := json.NewDecoder(file)
 	var newsArray []News
 	err = decoder.Decode(&newsArray)
 	u.HandleError(err)
+
 	newsArray = append(newsArray, news)
 	file, err = os.Create("news.json")
 	u.HandleError(err)
+
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(newsArray)
 	u.HandleError(err)
+
 	defer file.Close()
 }
 
 func cleanJSONFile(news News) {
 	file, err := os.Open("news.json")
 	u.HandleError(err)
+
 	decoder := json.NewDecoder(file)
 	var newsArray []News
 	err = decoder.Decode(&newsArray)
@@ -121,9 +138,11 @@ func cleanJSONFile(news News) {
 	if len(newsArray) > 500 {
 		file, err = os.Create("news.json")
 		u.HandleError(err)
+
 		encoder := json.NewEncoder(file)
 		err = encoder.Encode(newsArray[len(newsArray)-500:])
 		u.HandleError(err)
+
 		defer file.Close()
 	}
 }
