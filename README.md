@@ -10,7 +10,7 @@ Rename `example.env` to `.env` and put the key in the file.
 ```env
 TOKEN=<TOKEN>
 ```
-Now, you can go to `api.js` and change the relevant topics in the array. By default, the topics are: `privacy, hack, linux, golang, hacker, malware, exploit, leak, CIA, NSA, hacked, breaches, breached, security, OSINT, leaked, GNU, free and open source, open source`.
+Now you can go to `topics.json` and change the relevant topics in the array. By default, the topics are: `privacy, hack, linux, golang, hacker, malware, exploit, leak, CIA, NSA, hacked, breaches, breached, security, OSINT, leaked, GNU, free and open source, open source`.
 
 install packages:
 ```
