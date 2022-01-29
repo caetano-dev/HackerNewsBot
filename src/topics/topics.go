@@ -44,4 +44,6 @@ func GetTopics(update tgbotapi.Update) {
 	}
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, convertTopicsToString(topicArray))
 	bot.Send(msg)
+	msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Run /news to start recieving news every hour.")
+	bot.Send(msg)
 }

@@ -25,7 +25,7 @@ func main() {
 				t.GetTopics(update)
 			}
 
-			if update.Message.Text == "/fetch" {
+			if update.Message.Text == "/news" {
 				for {
 					a.FetchNews(update)
 					time.Sleep(time.Hour)
