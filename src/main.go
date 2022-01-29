@@ -5,6 +5,7 @@ import (
 	"time"
 
 	a "hackernewsbot/api"
+	t "hackernewsbot/topics"
 	u "hackernewsbot/utils"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -21,12 +22,15 @@ func main() {
 	for update := range updates {
 		if update.Message != nil {
 			if update.Message.Text == "/start" {
+				t.GetTopics(update)
+			}
+
+			if update.Message.Text == "/fetch" {
 				for {
 					a.FetchNews(update)
 					time.Sleep(time.Hour)
 				}
 			}
-
 		}
 
 	}

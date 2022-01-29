@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	t "hackernewsbot/topics"
 	u "hackernewsbot/utils"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -40,17 +41,6 @@ func GetLatestNewsID() ([]int, error) {
 	return ids, nil
 }
 
-func readTopics() ([]string, error) {
-	file, err := os.Open("topics.json")
-	u.HandleError(err)
-	defer file.Close()
-
-	var topics []string
-	err = json.NewDecoder(file).Decode(&topics)
-	u.HandleError(err)
-	return topics, nil
-}
-
 // FetchNews returns the news titles and urls
 func FetchNews(update tgbotapi.Update) {
 	bot, err := u.Login()
@@ -74,7 +64,7 @@ func FetchNews(update tgbotapi.Update) {
 		err = json.NewDecoder(resp.Body).Decode(&news)
 		u.HandleError(err)
 
-		topics, err := readTopics()
+		topics, err := t.ReadTopics()
 		u.HandleError(err)
 
 		for _, topic := range topics {
