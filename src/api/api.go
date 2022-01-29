@@ -12,7 +12,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-var relevantTopics = []string{"privacy", "hack", "linux", "golang", "hacker", "malware", "exploit", "leak", "CIA", "NSA", "hacked", "breaches", "breached", "security", "OSINT", "leaked", "GNU", "free and open source", "open source"}
+var relevantTopics []string
 var newStoriesIDs = "https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty"
 var newsInfos = "https://hacker-news.firebaseio.com/v0/item/%d.json?print=pretty"
 var ids []int
@@ -40,6 +40,17 @@ func GetLatestNewsID() ([]int, error) {
 	return ids, nil
 }
 
+func readTopics() ([]string, error) {
+	file, err := os.Open("topics.json")
+	u.HandleError(err)
+	defer file.Close()
+
+	var topics []string
+	err = json.NewDecoder(file).Decode(&topics)
+	u.HandleError(err)
+	return topics, nil
+}
+
 // FetchNews returns the news titles and urls
 func FetchNews(update tgbotapi.Update) {
 	bot, err := u.Login()
@@ -63,7 +74,10 @@ func FetchNews(update tgbotapi.Update) {
 		err = json.NewDecoder(resp.Body).Decode(&news)
 		u.HandleError(err)
 
-		for _, topic := range relevantTopics {
+		topics, err := readTopics()
+		u.HandleError(err)
+
+		for _, topic := range topics {
 			if news.Title != "" && news.URL != "" && strings.Contains(strings.ToLower(news.Title), topic) && !checkIfNewsIsInJSON(news) {
 				addNewsToJSON(news)
 				cleanJSONFile(news)
