@@ -1,4 +1,4 @@
-# HackerNews Telegram bot - Golang version
+# HackerNews Telegram bot
 
 A Telegram bot that serves you with personalized HackerNews articles. You can self host it and make it filter only the news that are relevant to you.
 
